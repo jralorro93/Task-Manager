@@ -10,35 +10,52 @@ MongoClient.connect(connectionUrl, { useNewUrlParser: true }, (error, client) =>
 
     const db = client.db(databaseName)
 
-    // db.collection('users').findOne({ _id: new ObjectID('5d3c941d4acbbbf7562c879c') }, (error, user) => {
+    ///////////////////////////////////////////// CREATE /////////////////////////////////////////////
+    // db.collection('users').insertOne({
+    //     name: 'Aj',
+    //     age: '31'
+    // }, (error, result) => {
     //     if (error) {
-    //         return console.log('Unable to find user')
+    //         return console.log(error)
     //     }
 
-    //     console.log(user)
+    //     console.log(result.ops)
     // })
 
-    // db.collection('users').find({ age: "25" }).toArray((error, users) => {
-    //     console.log(users)
+
+    ///////////////////////////////////////////// READ /////////////////////////////////////////////
+    // db.collection('users').findOne({
+    //     _id: new ObjectID('5d425add43cbd0238411581c')
+    // }, (error, result) => {
+    //     if (error) {
+    //         return console.log(error)
+    //     }
+    //     console.log(result)
     // })
 
-    // db.collection('users').find({ age: "25" }).count((error, count) => {
-    //     console.log(count)
+
+
+    ///////////////////////////////////////////// UPDATE /////////////////////////////////////////////
+    // db.collection('users').updateOne({ 
+    //     _id: new  ObjectID("5d3b45093ebb39f229a7942c")
+    // }, {
+    //     $inc: {
+    //         age: 1
+    //     }
+    // }).then((result) => {
+    //     console.log(result)
+    // }).catch((error) => {
+    //     console.log(error)
     // })
 
-    db.collection('tasks').findOne({_id: new ObjectID('5d3b4a27dc0900f321c6d11c')}, (error, task) => {
-        if (error) {
-            return console.log('Unable to find task')
-        }
 
-        console.log(task)
-    })
 
-    db.collection('tasks').find({completed: false}).toArray((error, tasks) => {
-        if (error) {
-            return console.log('Unable to find tasks')
-        }
-
-        console.log(tasks)
-    })
+    ///////////////////////////////////////////// DELETE /////////////////////////////////////////////
+    // db.collection('users').deleteMany({
+    //     age: 29
+    // }).then((result) => {
+    //     console.log(result)
+    // }).catch((error) => {
+    //     console.log(error)
+    // })
 })
