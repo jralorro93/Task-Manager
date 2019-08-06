@@ -12,12 +12,6 @@ app.use(express.json())
 
 //USERS CRUD
 app.get('/users', async (req, res) => {
-    // User.find({}).then((users) => {
-    //     res.send(users)
-    // }).catch((err) => {
-    //     res.status(500).send()
-    // })
-
     try {
          const users = await User.find({})
          res.send(users)
@@ -47,6 +41,29 @@ app.post('/users', async (req, res) => {
     try {
         await user.save()
         res.status(201).send(user)
+    } catch (e) {
+        res.status(400).send(e)
+    }
+})
+
+app.patch('/users/:id', async (req, res) => {
+
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['name', 'email', 'password' ,'age']
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+
+    if (!isValidOperation) {
+        return res.status(404).send({error: 'Invalid updates!'})
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
+
+        if (!user) {
+            return res.status(404).send()
+        }
+
+        res.send(user)
     } catch (e) {
         res.status(400).send(e)
     }
