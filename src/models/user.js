@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -39,10 +40,30 @@ const userSchema = new mongoose.Schema({
         throw new Error("Age must be a positive number");
       }
     }
-  }
+  },
+  tokens: [{
+    token: {
+      type: String,
+      required:true
+    }
+  }]
 })
 
 
+// _.methods.nameOfInstanceMethod generates an instance method
+userSchema.methods.generateAuthToken = async function () {
+  const user = this
+  //In token, we need to change the value of the _id key to a string, because that is what json is expecting
+  const token = jwt.sign({ _id: user._id.toString() }, 'thisIsTokenSecret')
+  //Concats jwt token to user
+  user.tokens = user.tokens.concat({token})
+  await user.save()
+
+  //Return value = token
+  return token
+}
+
+// _.statics.nameOfClassMethod generates a class method
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({email})
 
@@ -59,7 +80,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 }
 
 
-//Has the plain textpassword before saving
+//Has the plain text password before saving
 userSchema.pre('save', async function (next) {
   const user = this
 
