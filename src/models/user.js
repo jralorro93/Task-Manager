@@ -64,6 +64,17 @@ userSchema.methods.generateAuthToken = async function () {
   return token
 }
 
+//Hides private data, such as password and tokens array
+userSchema.methods.toJSON = function () {
+  const user = this
+  const userObject = user.toObject()
+
+  delete userObject.password
+  delete userObject.tokens
+
+  return userObject
+}
+
 // _.statics.nameOfClassMethod generates a class method
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({email})
