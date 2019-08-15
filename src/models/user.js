@@ -49,6 +49,14 @@ const userSchema = new mongoose.Schema({
   }]
 })
 
+//Virtual Property, is a relationship between user and task.
+userSchema.virtual('tasks', {
+  ref: 'Task',
+  //Relationship between task and owner.
+  //_id is the local field b/c _id of the owner belongs in the database
+  localField: '_id',
+  foreignField: 'owner'
+})
 
 // _.methods.nameOfInstanceMethod generates an instance method
 userSchema.methods.generateAuthToken = async function () {
