@@ -18,18 +18,27 @@ router.post('/tasks', auth, async (req, res) => {
     }
 })
 
+//Limit = limits the number of result we get back from any request 
+//skip = allows us to iterate over pages
+//Example: GET /tasks?limit=10&skip=20
 router.get('/tasks', auth, async (req, res) => {
     //we received user from adding auth middleware as an argument
     const match = {}
 
+    // Added filter 
     if (req.query.completed) {
         match.completed = req.query.completed === 'true'
     }
 
     try {
+        // Added filter 
         await req.user.populate({
             path: 'tasks',
-            match
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip)
+            }
         }).execPopulate() 
         res.status(200).send(req.user.tasks)
     } catch(e) {
