@@ -21,13 +21,23 @@ router.post('/tasks', auth, async (req, res) => {
 //Limit = limits the number of result we get back from any request 
 //skip = allows us to iterate over pages
 //Example: GET /tasks?limit=10&skip=20
+//Get /tasks?soryBy=createdAt_asc
 router.get('/tasks', auth, async (req, res) => {
     //we received user from adding auth middleware as an argument
     const match = {}
+    const sort = {}
 
-    // Added filter 
+    // Added filter, allows filter to be dynamic
     if (req.query.completed) {
         match.completed = req.query.completed === 'true'
+    }
+    
+    // Added sort, allows sort to be dynamic
+    if (req.query.soryBy) {
+        const parts = req.query.soryBy.split(':')
+        sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+        console.log(parts)
+        console.log(sort)
     }
 
     try {
@@ -37,7 +47,8 @@ router.get('/tasks', auth, async (req, res) => {
             match,
             options: {
                 limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip)
+                skip: parseInt(req.query.skip),
+                sort,
             }
         }).execPopulate() 
         res.status(200).send(req.user.tasks)
